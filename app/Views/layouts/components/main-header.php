@@ -508,7 +508,7 @@
 								<li><a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('file-manager'); ?>"><i class="fe fe-database p-1 rounded-circle bg-primary-transparent klist me-2 fs-16"></i>File Manger<span class="badge bg-primary1 text-fixed-white ms-auto fs-9">2</span></a></li>
 								<li><a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('mail-settings'); ?>"><i class="fe fe-settings p-1 rounded-circle bg-primary-transparent ings me-2 fs-16"></i>Settings</a></li>
 								<li class="border-top bg-light"><a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('chat'); ?>"><i class="fe fe-help-circle p-1 rounded-circle bg-primary-transparent set me-2 fs-16"></i>Help</a></li>
-								<li><a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('sign-in-cover'); ?>"><i class="fe fe-lock p-1 rounded-circle bg-primary-transparent ut me-2 fs-16"></i>Log Out</a></li>
+								<li><a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('logout'); ?>"><i class="fe fe-lock p-1 rounded-circle bg-primary-transparent ut me-2 fs-16"></i>Log Out</a></li>
 							</ul>
 						</li>  
 						<!-- End::header-element -->

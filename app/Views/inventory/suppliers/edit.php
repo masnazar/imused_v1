@@ -6,38 +6,28 @@ Edit Supplier
 
 <?= $this->section('content') ?>
 
-<!-- Flash Messages -->
-<?php if (session()->has('success_message')) : ?>
-    <div class="alert alert-secondary alert-dismissible fs-15 fade show mb-4">
-        <?= session('success_message') ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-            <i class="bi bi-x"></i>
-        </button>
-    </div>
+<!-- SweetAlert for Flash Messages -->
+<?php if (session()->getFlashdata('swal_success')): ?>
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: '<?= session()->getFlashdata('swal_success') ?>',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+<?php elseif (session()->getFlashdata('swal_error')): ?>
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: '<?= session()->getFlashdata('swal_error') ?>',
+            showConfirmButton: true
+        });
+    </script>
 <?php endif; ?>
-
-<?php if (session()->has('error_message')) : ?>
-    <div class="alert alert-danger alert-dismissible fs-15 fade show mb-4">
-        <?= session('error_message') ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-            <i class="bi bi-x"></i>
-        </button>
-    </div>
-<?php endif; ?>
-
-<?php if (session()->has('errors')) : ?>
-    <div class="alert alert-danger alert-dismissible fs-15 fade show mb-4">
-        <ul>
-            <?php foreach (session('errors') as $error) : ?>
-                <li><?= esc($error) ?></li>
-            <?php endforeach ?>
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-            <i class="bi bi-x"></i>
-        </button>
-    </div>
-<?php endif; ?>
-<!-- Flash Messages End -->
+<!-- SweetAlert End -->
 
 <!-- Page Header -->
 <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2">

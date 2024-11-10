@@ -10,113 +10,98 @@ class UserController extends Controller
 {
     public function index()
     {
-        // Menampilkan halaman daftar pengguna
-        return view('users/index');
-    }
+        // Ambil semua data pengguna untuk ditampilkan di halaman daftar pengguna
+        $userModel = new UserModel();
+        $data['users'] = $userModel->findAll();
 
-    public function getUsers()
-    {
-        $model = new UserModel();
-        $request = service('request');
-
-        // Ambil parameter dari request untuk server-side processing
-        $search = $request->getVar('search')['value'] ?? '';
-        $start = (int)($request->getVar('start') ?? 0);
-        $length = (int)($request->getVar('length') ?? 10);
-        $orderColumnIndex = $request->getVar('order')[0]['column'] ?? 0;
-        $orderDir = $request->getVar('order')[0]['dir'] ?? 'asc';
-
-        // Kolom yang diurutkan, sesuai urutan pada DataTables
-        $columns = ['full_name', 'username', 'email'];
-        $orderColumn = $columns[$orderColumnIndex] ?? 'id';
-
-        // Mengambil data dengan metode dari model
-        $totalData = $model->countAllData();
-        $totalFiltered = $model->countFilteredData($search);
-        $data = $model->getDataTables($search, $start, $length, $orderColumn, $orderDir);
-
-        // Format data untuk DataTables
-        $result = [
-            "draw" => intval($request->getVar('draw')),
-            "recordsTotal" => $totalData,
-            "recordsFiltered" => $totalFiltered,
-            "data" => $data
-        ];
-
-        return $this->response->setJSON($result);
+        return view('users/index', $data);
     }
 
     public function create()
     {
+        // Ambil data posisi untuk dropdown pilihan posisi
         $positionModel = new PositionModel();
-        $data['positions'] = $positionModel->findAll(); // Mengambil daftar posisi untuk dropdown
+        $data['positions'] = $positionModel->findAll();
+
         return view('users/create', $data);
     }
 
     public function store()
     {
-        $model = new UserModel();
-        $data = [
-            'full_name' => $this->request->getPost('full_name'),
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email'),
-            'whatsapp_number' => $this->request->getPost('whatsapp_number'),
-            'position_id' => $this->request->getPost('position_id'),
-            'password' => $this->request->getPost('password') // Tambahkan password
-        ];
+        // Validasi input untuk proses penyimpanan data user baru
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'full_name'       => 'required|min_length[3]|max_length[50]',
+            'username'        => 'required|alpha_numeric|min_length[3]|max_length[20]|is_unique[users.username]',
+            'email'           => 'required|valid_email|is_unique[users.email]',
+            'whatsapp_number' => 'required|regex_match[/^62[0-9]{9,13}$/]',
+            'position_id'     => 'required|integer',
+        ]);
 
-        if ($model->save($data)) {
-            return redirect()->to('/users')->with('success', 'Pengguna berhasil ditambahkan.');
-        } else {
-            return redirect()->back()->with('error', 'Gagal menambahkan pengguna.')->withInput();
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
+
+        // Simpan data user ke database
+        $userModel = new UserModel();
+        $userModel->save([
+            'full_name'       => $this->request->getPost('full_name'),
+            'username'        => $this->request->getPost('username'),
+            'email'           => $this->request->getPost('email'),
+            'whatsapp_number' => $this->request->getPost('whatsapp_number'),
+            'position_id'     => $this->request->getPost('position_id'),
+        ]);
+
+        return redirect()->to('/users')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $model = new UserModel();
+        // Ambil data pengguna dan posisi untuk edit
+        $userModel = new UserModel();
         $positionModel = new PositionModel();
-        $data['user'] = $model->find($id);
-        $data['positions'] = $positionModel->findAll(); // Mengambil daftar posisi untuk dropdown
 
-        if (!$data['user']) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException("Pengguna dengan ID $id tidak ditemukan");
-        }
+        $data['user'] = $userModel->find($id);
+        $data['positions'] = $positionModel->findAll();
 
         return view('users/edit', $data);
     }
 
     public function update($id)
     {
-        $model = new UserModel();
-        $data = [
-            'full_name' => $this->request->getPost('full_name'),
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email'),
+        // Validasi input untuk proses update data user
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'full_name'       => 'required|min_length[3]|max_length[50]',
+            'username'        => "required|alpha_numeric|min_length[3]|max_length[20]|is_unique[users.username,id,{$id}]",
+            'email'           => "required|valid_email|is_unique[users.email,id,{$id}]",
+            'whatsapp_number' => 'required|regex_match[/^62[0-9]{9,13}$/]',
+            'position_id'     => 'required|integer',
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+        // Update data user di database
+        $userModel = new UserModel();
+        $userModel->update($id, [
+            'full_name'       => $this->request->getPost('full_name'),
+            'username'        => $this->request->getPost('username'),
+            'email'           => $this->request->getPost('email'),
             'whatsapp_number' => $this->request->getPost('whatsapp_number'),
-            'position_id' => $this->request->getPost('position_id')
-        ];
+            'position_id'     => $this->request->getPost('position_id'),
+        ]);
 
-        // Periksa apakah password diisi, hanya update jika ada input baru
-        if ($this->request->getPost('password')) {
-            $data['password'] = $this->request->getPost('password');
-        }
-
-        if ($model->update($id, $data)) {
-            return redirect()->to('/users')->with('success', 'Pengguna berhasil diperbarui.');
-        } else {
-            return redirect()->back()->with('error', 'Gagal memperbarui pengguna.')->withInput();
-        }
+        return redirect()->to('/users')->with('success', 'Pengguna berhasil diperbarui.');
     }
 
     public function delete($id)
     {
-        $model = new UserModel();
+        // Hapus data user berdasarkan ID
+        $userModel = new UserModel();
+        $userModel->delete($id);
 
-        if ($model->delete($id)) {
-            return redirect()->to('/users')->with('success', 'Pengguna berhasil dihapus.');
-        } else {
-            return redirect()->to('/users')->with('error', 'Gagal menghapus pengguna.');
-        }
+        return redirect()->to('/users')->with('success', 'Pengguna berhasil dihapus.');
     }
 }

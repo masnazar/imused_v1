@@ -37,7 +37,7 @@ class SupplierController extends Controller
         // Jika validasi gagal, kembali ke form dengan error
         if (!$validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('errors', $validation->getErrors())
-                            ->with('error_message', 'Gagal menambahkan supplier. Silakan periksa input Anda.');
+                            ->with('swal_error', 'Gagal menambahkan supplier. Silakan periksa input Anda.');
         }
 
         // Simpan data supplier
@@ -49,7 +49,7 @@ class SupplierController extends Controller
             'pic_whatsapp'  => $this->request->getPost('pic_whatsapp'),
         ]);
 
-        return redirect()->to('/suppliers')->with('success_message', 'Supplier berhasil ditambahkan.');
+        return redirect()->to('/suppliers')->with('swal_success', 'Supplier berhasil ditambahkan.');
     }
 
     // Menampilkan form edit dengan data supplier yang dipilih
@@ -81,7 +81,7 @@ class SupplierController extends Controller
 
         if (!$validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('errors', $validation->getErrors())
-                            ->with('error_message', 'Gagal memperbarui supplier. Silakan periksa input Anda.');
+                            ->with('swal_error', 'Gagal memperbarui supplier. Silakan periksa input Anda.');
         }
 
         // Update data supplier
@@ -93,7 +93,7 @@ class SupplierController extends Controller
             'pic_whatsapp'  => $this->request->getPost('pic_whatsapp'),
         ]);
 
-        return redirect()->to('/suppliers')->with('success_message', 'Supplier berhasil diperbarui.');
+        return redirect()->to('/suppliers')->with('swal_success', 'Supplier berhasil diperbarui.');
     }
 
     // Menghapus data supplier berdasarkan ID
@@ -102,7 +102,7 @@ class SupplierController extends Controller
         $model = new SupplierModel();
         $model->delete($id);
 
-        return redirect()->to('/suppliers')->with('success_message', 'Supplier berhasil dihapus.');
+        return redirect()->to('/suppliers')->with('swal_success', 'Supplier berhasil dihapus.');
     }
 
     // Server-side processing untuk data supplier di DataTables
@@ -125,13 +125,21 @@ class SupplierController extends Controller
         $totalFiltered = $model->countFilteredData($search);
         $data = $model->getDataTables($search, $start, $length, $orderColumn, $orderDir);
 
-        // Tambahkan tombol aksi untuk setiap data
+        // Tambahkan dropdown tiga titik vertikal untuk setiap data
         foreach ($data as &$row) {
-            $row['actions'] = '<a href="' . base_url('suppliers/edit/' . $row['id']) . '" class="btn btn-warning btn-sm">Edit</a> 
-                               <a href="' . base_url('suppliers/delete/' . $row['id']) . '" class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus supplier ini?\')">Hapus</a>';
+            $row['actions'] = '
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ri-more-2-fill"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="' . base_url('suppliers/edit/' . $row['id']) . '">Edit</a></li>
+                        <li><a class="dropdown-item text-danger" href="' . base_url('suppliers/delete/' . $row['id']) . '" onclick="return confirm(\'Yakin ingin menghapus supplier ini?\')">Hapus</a></li>
+                    </ul>
+                </div>';
         }
 
-        // Format data sesuai kebutuhan DataTables
+        // Format data untuk DataTables
         $result = [
             "draw" => intval($request->getVar('draw')),
             "recordsTotal" => intval($totalData),

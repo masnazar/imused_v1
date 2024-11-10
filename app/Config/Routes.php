@@ -5,60 +5,71 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
 
-// Routes untuk RoleController
-$routes->get('roles', 'RoleController::index'); // Menampilkan daftar role
-$routes->get('roles/getRoles', 'RoleController::getRoles'); // Mengambil data role untuk server-side processing
+// ===================================================
+// Home Route
+// ===================================================
+$routes->get('/dashboard', 'Home::index');                                                  // Halaman utama
+$routes->get('/', 'Home::index'); 
 
-// Routes untuk membuat role baru
-$routes->get('roles/create', 'RoleController::create'); // Menampilkan form untuk tambah role
-$routes->post('roles/store', 'RoleController::store'); // Menyimpan role baru
+// ===================================================
+// Auth Routes
+// ===================================================
+$routes->get('register', 'AuthController::register');                             // Form registrasi pengguna baru
+$routes->post('auth/storeRegistration', 'AuthController::storeRegistration');      // Proses simpan registrasi
+$routes->get('login', 'AuthController::login');                                    // Form login
+$routes->post('auth/authenticate', 'AuthController::authenticate');                // Proses autentikasi login
+$routes->get('logout', 'AuthController::logout');                                  // Proses logout
 
-// Routes untuk mengedit role
-$routes->get('roles/edit/(:num)', 'RoleController::edit/$1'); // Menampilkan form edit role berdasarkan ID
-$routes->post('roles/update/(:num)', 'RoleController::update/$1'); // Menyimpan perubahan data role
+// ===================================================
+// Supplier Management Routes
+// ===================================================
+$routes->get('/suppliers', 'SupplierController::index');                           // Daftar supplier
+$routes->get('/suppliers/create', 'SupplierController::create');                   // Form tambah supplier
+$routes->post('/suppliers/store', 'SupplierController::store');                    // Proses simpan supplier baru
+$routes->get('/suppliers/edit/(:num)', 'SupplierController::edit/$1');             // Form edit supplier berdasarkan ID
+$routes->post('/suppliers/update/(:num)', 'SupplierController::update/$1');        // Proses update supplier
+$routes->get('/suppliers/delete/(:num)', 'SupplierController::delete/$1');         // Proses hapus supplier
+$routes->get('/suppliers/getSuppliers', 'SupplierController::getSuppliers');       // Server-side data supplier untuk DataTables
 
-// Routes untuk menghapus role
-$routes->get('roles/delete/(:num)', 'RoleController::delete/$1'); // Menghapus role berdasarkan ID
+// ===================================================
+// Brand Management Routes
+// ===================================================
+$routes->group('brands', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('/', 'BrandController::index');                                   // Daftar brand
+    $routes->get('getBrands', 'BrandController::getBrands');                       // Server-side data brand untuk DataTables
+    $routes->get('create', 'BrandController::create');                             // Form tambah brand
+    $routes->post('store', 'BrandController::store');                              // Proses simpan brand baru
+    $routes->get('edit/(:num)', 'BrandController::edit/$1');                       // Form edit brand berdasarkan ID
+    $routes->post('update/(:num)', 'BrandController::update/$1');                  // Proses update brand
+    $routes->get('delete/(:num)', 'BrandController::delete/$1');                   // Proses hapus brand
+});
 
-// Routes untuk pengaturan permissions
-$routes->get('roles/managePermissions/(:num)', 'RoleController::managePermissions/$1'); // Menampilkan form pengaturan permissions untuk role tertentu
-$routes->post('roles/assignPermissionToRole/(:num)', 'RoleController::assignPermissionToRole/$1'); // Menyimpan permissions yang dipilih untuk role tertentu
+// ===================================================
+// Product Management Routes
+// ===================================================
+$routes->group('products', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('/', 'ProductController::index');                                 // Daftar produk
+    $routes->get('create', 'ProductController::create');                           // Form tambah produk
+    $routes->post('store', 'ProductController::store');                            // Proses simpan produk baru
+    $routes->get('edit/(:num)', 'ProductController::edit/$1');                     // Form edit produk
+    $routes->post('update/(:num)', 'ProductController::update/$1');                // Proses update produk
+    $routes->get('delete/(:num)', 'ProductController::delete/$1');                 // Proses hapus produk
+    $routes->get('getProducts', 'ProductController::getProducts');                 // Server-side data produk untuk DataTables
+});
 
+// ===================================================
+// User Management Routes
+// ===================================================
+$routes->get('users', 'UserController::index');                                    // Daftar pengguna
+$routes->get('users/create', 'UserController::create');                            // Form tambah pengguna baru
+$routes->post('users/store', 'UserController::store');                             // Proses simpan pengguna baru
+$routes->get('users/edit/(:num)', 'UserController::edit/$1');                      // Form edit pengguna berdasarkan ID
+$routes->post('users/update/(:num)', 'UserController::update/$1');                 // Proses update pengguna
+$routes->get('users/delete/(:num)', 'UserController::delete/$1');                  // Proses hapus pengguna
 
-// Routes untuk Department
-$routes->get('departments', 'DepartmentController::index');
-$routes->get('departments/getDepartments', 'DepartmentController::getDepartments');
-$routes->get('departments/create', 'DepartmentController::create');
-$routes->post('departments/store', 'DepartmentController::store');
-$routes->get('departments/edit/(:num)', 'DepartmentController::edit/$1');
-$routes->post('departments/update/(:num)', 'DepartmentController::update/$1');
-$routes->get('departments/delete/(:num)', 'DepartmentController::delete/$1');
-
-// Routes untuk Position
-$routes->get('positions', 'PositionController::index');
-$routes->get('positions/getPositions', 'PositionController::getPositions');
-$routes->get('positions/create', 'PositionController::create');
-$routes->post('positions/store', 'PositionController::store');
-$routes->get('positions/edit/(:num)', 'PositionController::edit/$1');
-$routes->post('positions/update/(:num)', 'PositionController::update/$1');
-$routes->get('positions/delete/(:num)', 'PositionController::delete/$1');
-
-// Routes untuk User
-$routes->get('users', 'UserController::index');
-$routes->get('users/getUsers', 'UserController::getUsers');
-$routes->get('users/create', 'UserController::create');
-$routes->post('users/store', 'UserController::store');
-$routes->get('users/edit/(:num)', 'UserController::edit/$1');
-$routes->post('users/update/(:num)', 'UserController::update/$1');
-$routes->get('users/delete/(:num)', 'UserController::delete/$1');
-
-
-$routes->get('/suppliers', 'SupplierController::index');
-$routes->get('/suppliers/create', 'SupplierController::create');
-$routes->post('/suppliers/store', 'SupplierController::store');
-$routes->get('/suppliers/edit/(:num)', 'SupplierController::edit/$1');
-$routes->post('/suppliers/update/(:num)', 'SupplierController::update/$1');
-$routes->get('/suppliers/delete/(:num)', 'SupplierController::delete/$1');
-$routes->get('/suppliers/getSuppliers', 'SupplierController::getSuppliers');
+$routes->group('settings', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('/', 'SettingsController::index'); // Menampilkan halaman pengaturan
+    $routes->post('update', 'SettingsController::update'); // Memperbarui pengaturan
+});
+$routes->get('logo/(:any)', 'SettingsController::serveLogo/$1');
