@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\SettingsModel;
 use CodeIgniter\Controller;
 
-class SettingsController extends Controller
+class SettingsController extends BaseController
 {
     protected $settingsModel;
 
@@ -16,50 +16,72 @@ class SettingsController extends Controller
 
     public function index()
     {
+        // Default ke halaman Pengaturan Bisnis
+        return redirect()->to('/settings/business');
+    }
+
+    public function business()
+    {
         $data = [
             'company_name' => $this->settingsModel->getSetting('company_name'),
             'company_address' => $this->settingsModel->getSetting('company_address'),
             'company_contact' => $this->settingsModel->getSetting('company_contact'),
-            'default_language' => $this->settingsModel->getSetting('default_language'),
-            'timezone' => $this->settingsModel->getSetting('timezone'),
-            'logo' => $this->settingsModel->getSetting('logo')
+            'logo' => $this->settingsModel->getSetting('logo'),
+            'active_tab' => 'business' // Menandakan tab aktif
         ];
 
         return view('settings/index', $data);
     }
 
-    public function update()
-{
-    $settings = $this->request->getPost('settings');
-    $logoFile = $this->request->getFile('logo');
+    public function system()
+    {
+        $data = [
+            'default_language' => $this->settingsModel->getSetting('default_language'),
+            'timezone' => $this->settingsModel->getSetting('timezone'),
+            'active_tab' => 'system' // Menandakan tab aktif
+        ];
 
-    // Upload logo jika file diunggah
-    if ($logoFile && $logoFile->isValid()) {
-        // Simpan file ke direktori 'public/uploads/logos'
-        $logoPath = $logoFile->move('uploads/logos'); // Pindahkan ke 'public/uploads/logos'
-        $this->settingsModel->updateSetting('logo', 'uploads/logos/' . $logoFile->getName());
+        return view('settings/index', $data);
     }
 
-    // Update pengaturan lain
-    foreach ($settings as $key => $value) {
-        $this->settingsModel->updateSetting($key, $value);
+    public function notification()
+    {
+        $data = [
+            'active_tab' => 'notification' // Menandakan tab aktif
+        ];
+
+        return view('settings/index', $data);
     }
 
-    return redirect()->back()->with('swal_success', 'Pengaturan berhasil diperbarui.');
-}
+    public function update($type)
+    {
+        $settings = $this->request->getPost();
+        $logoFile = $this->request->getFile('logo');
 
-public function serveLogo($filename)
-{
-    $path = WRITEPATH . 'uploads/logos/' . $filename;
+        // Allowed MIME types and extensions
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 
-    if (!is_file($path)) {
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        // Validasi file logo
+        if ($logoFile && $logoFile->isValid() && !$logoFile->hasMoved()) {
+            if (in_array($logoFile->getMimeType(), $allowedTypes) && in_array($logoFile->getExtension(), $allowedExtensions)) {
+                // Valid file, proceed with upload
+                $newName = $logoFile->getRandomName();
+                $logoFile->move('public/uploads/logos', $newName);
+                $this->settingsModel->updateSetting('logo', 'uploads/logos/' . $newName);
+            } else {
+                // Jika file bukan gambar, beri notifikasi kesalahan
+                return redirect()->back()->with('swal_error', 'Hanya file gambar dengan format JPEG, PNG, atau GIF yang diizinkan.');
+            }
+        }
+
+        // Update pengaturan lainnya berdasarkan tipe
+        foreach ($settings as $key => $value) {
+            if ($key !== 'logo') {
+                $this->settingsModel->updateSetting($key, $value);
+            }
+        }
+
+        return redirect()->back()->with('swal_success', 'Pengaturan berhasil diperbarui.');
     }
-
-    $mimeType = mime_content_type($path);
-    header("Content-Type: $mimeType");
-    readfile($path);
-    exit;
-}
-
 }

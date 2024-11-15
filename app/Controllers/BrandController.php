@@ -6,7 +6,7 @@ use App\Models\BrandModel;
 use App\Models\SupplierModel;
 use CodeIgniter\Controller;
 
-class BrandController extends Controller
+class BrandController extends BaseController
 {
     // Menampilkan halaman daftar brand
     public function index()

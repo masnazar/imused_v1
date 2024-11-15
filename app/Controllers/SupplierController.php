@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\SupplierModel;
 use CodeIgniter\Controller;
 
-class SupplierController extends Controller
+class SupplierController extends BaseController
 {
     // Menampilkan halaman daftar supplier
     public function index()

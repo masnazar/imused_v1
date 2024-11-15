@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateProductHppHistoryTable extends Migration
+class CreateStocksTable extends Migration
 {
     public function up()
     {
@@ -15,28 +15,39 @@ class CreateProductHppHistoryTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
+            'warehouse_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+            ],
             'product_id' => [
                 'type'       => 'INT',
                 'constraint' => 11,
                 'unsigned'   => true,
             ],
-            'hpp' => [
-                'type'       => 'DECIMAL',
-                'constraint' => '15,2',
+            'quantity' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'default'    => 0,
+            ],
+            'created_at' => [
+                'type' => 'DATETIME',
+                'null' => true,
             ],
             'updated_at' => [
-                'type'       => 'DATETIME',
-                'null'       => false,
+                'type' => 'DATETIME',
+                'null' => true,
             ],
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('product_id', 'products', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('product_hpp_history');
+        $this->forge->createTable('stocks');
     }
 
     public function down()
     {
-        $this->forge->dropTable('product_hpp_history');
+        $this->forge->dropTable('stocks');
     }
 }

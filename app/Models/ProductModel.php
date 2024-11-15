@@ -34,13 +34,15 @@ class ProductModel extends Model
         return $builder->countAllResults();
     }
 
-    // Mengambil data untuk DataTables
+    // Mengambil data untuk DataTables dengan total stok
     public function getDataTables($search = '', $start = 0, $length = 10, $orderColumn = 'id', $orderDir = 'asc')
     {
         $builder = $this->table($this->table)
-                        ->select('products.*, brands.brand_name, suppliers.supplier_name')
+                        ->select('products.*, brands.brand_name, suppliers.supplier_name, COALESCE(SUM(stocks.quantity), 0) as total_stock')
                         ->join('brands', 'products.brand_id = brands.id', 'left')
-                        ->join('suppliers', 'products.supplier_id = suppliers.id', 'left');
+                        ->join('suppliers', 'products.supplier_id = suppliers.id', 'left')
+                        ->join('stocks', 'stocks.product_id = products.id', 'left') // Join dengan tabel stocks
+                        ->groupBy('products.id'); // Group by untuk menghitung total stok
 
         if ($search) {
             $builder->like('product_name', $search)
@@ -54,5 +56,14 @@ class ProductModel extends Model
                 ->limit($length, $start);
 
         return $builder->get()->getResultArray();
+    }
+
+    public function getSuppliersByProduct($productId)
+    {
+        return $this->select('suppliers.*')
+                    ->join('brands', 'brands.id = products.brand_id')
+                    ->join('suppliers', 'suppliers.id = brands.supplier_id')
+                    ->where('products.id', $productId)
+                    ->findAll();
     }
 }

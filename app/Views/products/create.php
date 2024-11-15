@@ -53,7 +53,7 @@ Tambah Produk
                     <!-- Harga Pokok Produksi (HPP) -->
                     <div class="mb-3">
                         <label for="hpp" class="form-label">HPP</label>
-                        <input type="number" name="hpp" class="form-control" id="hpp" required>
+                        <input type="number" name="hpp" class="form-control" id="hpp" step="0.01" required>
                     </div>
 
                     <!-- Stok Awal -->
@@ -90,6 +90,12 @@ Tambah Produk
                         <input type="text" name="bpom_number" class="form-control" id="bpomNumber">
                     </div>
 
+                    <!-- HPP Penjualan -->
+                    <div class="mb-3">
+                        <label for="hppPenjualan" class="form-label">HPP Penjualan</label>
+                        <input type="number" name="hpp_penjualan" class="form-control" id="hppPenjualan" step="0.01">
+                    </div>
+
                     <!-- Tombol Simpan -->
                     <div class="d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -123,26 +129,5 @@ Tambah Produk
             position: 'center'
         });
     <?php endif; ?>
-
-    // SweetAlert Konfirmasi Hapus
-    $(document).on('click', '.delete-product', function(e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
-        
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = href;
-            }
-        });
-    });
 </script>
 <?= $this->endSection() ?>

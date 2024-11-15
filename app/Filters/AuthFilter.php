@@ -12,16 +12,18 @@ class AuthFilter implements FilterInterface
     {
         if (!session()->get('isLoggedIn')) {
             // Redirect ke halaman login jika belum login
-            return redirect()->to('/login');
+            return redirect()->to('auth/login');
         }
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // Jika user sudah login, cegah akses login/registrasi
+        // Dapatkan path saat ini
         $currentPath = $request->getUri()->getPath();
-        if (session()->get('isLoggedIn') && in_array($currentPath, ['login', 'register'])) {
-            return redirect()->to('/dashboard');
+
+        // Cek jika user sudah login, cegah akses ke login atau register
+        if (session()->get('isLoggedIn') && (strpos($currentPath, 'auth/login') !== false || strpos($currentPath, 'auth/register') !== false)) {
+            return redirect()->to('/dashboard'); // Atau halaman utama ente
         }
     }
 }

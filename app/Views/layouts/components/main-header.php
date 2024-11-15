@@ -497,10 +497,12 @@
 							<ul class="main-header-dropdown dropdown-menu pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end" aria-labelledby="mainHeaderProfile">
 								<li>
 									<div class="dropdown-item text-center border-bottom">
-										<span>
-											Mr.Henry
-										</span>
-										<span class="d-block fs-12 text-muted">UI/UX Designer</span>
+									<span>
+                    <?= session()->get('full_name'); ?>
+                </span>
+                <span class="d-block fs-12 text-muted">
+                    <?= session()->get('position'); ?>
+                </span>
 									</div>
 								</li>
 								<li><a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('profile'); ?>"><i class="fe fe-user p-1 rounded-circle bg-primary-transparent me-2 fs-16"></i>Profile</a></li>

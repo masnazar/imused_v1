@@ -63,7 +63,7 @@
         <div class="authentication-cover overflow-hidden">
             <div class="authentication-cover-logo"> 
                 <a href="<?= base_url('index'); ?>"> 
-                    <img src="<?= base_url('assets/images/brand-logos/desktop-white.png'); ?>" alt="" class="authentication-brand desktop-white"> 
+                <img src="<?= $company_logo; ?>" alt="Logo Perusahaan" class="authentication-brand desktop-white"> 
                 </a> 
             </div>
             <div class="aunthentication-cover-content d-flex align-items-center justify-content-center">
@@ -81,7 +81,6 @@
 
 <?= $this->section('scripts'); ?>
 <script src="<?= base_url('assets/js/show-password.js'); ?>"></script>
-<script src="<?php echo base_url('assets/libs/sweetalert2/sweetalert2.min.js'); ?>"></script>
 <script>
     <?php if (session()->getFlashdata('swal_success')) : ?>
         Swal.fire({

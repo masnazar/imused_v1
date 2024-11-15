@@ -14,8 +14,8 @@
                 <div class="card-body p-5">
                     <div class="mb-3 d-flex justify-content-center">
                         <a href="<?= base_url('index'); ?>">
-                            <img src="<?= base_url('assets/images/brand-logos/desktop-logo.png'); ?>" alt="logo" class="desktop-logo">
-                            <img src="<?= base_url('assets/images/brand-logos/desktop-white.png'); ?>" alt="logo" class="desktop-white">
+                        <img src="<?= $company_logo; ?>" alt="Logo Perusahaan" class="authentication-brand desktop-white">
+                        <img src="<?= $company_logo; ?>" alt="Logo Perusahaan" class="authentication-brand desktop-white">
                         </a>
                     </div>
                     <p class="h5 mb-2 text-center">Registrasi Akun</p>

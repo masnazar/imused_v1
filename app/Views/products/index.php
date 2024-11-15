@@ -40,7 +40,7 @@ Daftar Produk
                                 <th>SKU Produk</th>
                                 <th>HPP Pembelian</th>
                                 <th>HPP Penjualan</th>
-                                <th>Stok</th>
+                                <th>Total Stok</th> <!-- Kolom baru Total Stok -->
                                 <th>No BPOM</th>
                                 <th>Nama Supplier</th>
                                 <th>Aksi</th>
@@ -88,7 +88,7 @@ Daftar Produk
                     }
                 },
                 { 
-                    "data": "stok",
+                    "data": "total_stock",  // Kolom Total Stok dari data stok gabungan
                     "render": function(data, type, row) {
                         return type === 'display' ? formatNumberWithCommas(parseInt(data)) : parseInt(data);
                     }

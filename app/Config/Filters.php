@@ -41,7 +41,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'csrf',
-            'auth' => ['except' => ['login', 'register', 'auth/authenticate', 'auth/storeRegistration', 'forgot-password']], // Kecualikan untuk proses login dan registrasi
+            'auth' => ['except' => ['auth/login', 'auth/register', 'auth/authenticate', 'auth/storeRegistration', 'forgot-password']], // Kecualikan untuk proses login dan registrasi
         ],
         'after' => [
             'toolbar',
