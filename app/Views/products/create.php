@@ -34,7 +34,7 @@ Tambah Produk
 
                     <!-- Nama Produk -->
                     <div class="mb-3">
-                        <label for="productName" class="form-label">Nama Produk</label>
+                        <label for="productName" class="form-label">Nama Produk, Laey</label>
                         <input type="text" name="product_name" class="form-control" id="productName" required>
                     </div>
 
