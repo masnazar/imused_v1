@@ -138,3 +138,9 @@ $routes->get('stock-receive/history', 'StockReceiveController::history');
 // di app/Config/Routes.php
 $routes->get('stock-receive/getSuppliersByProduct/(:num)', 'StockReceiveController::getSuppliersByProduct/$1');
 
+$routes->get('purchase-orders', 'PurchaseOrderController::index');
+$routes->get('purchase-orders/create', 'PurchaseOrderController::create');
+$routes->post('purchase-orders/store', 'PurchaseOrderController::store');
+$routes->get('purchase-order/getBrandsBySupplier/(:num)', 'PurchaseOrderController::getBrandsBySupplier/$1');
+
+
